@@ -26,7 +26,7 @@ def add_has_migration_label():
 
     r = s.get(BASE_API_ENDPOINT + pr_url + "/files")
     for file_dict in r.json():
-        if re.match("migrations/", file_dict["filename"]):
+        if "migrations/" in file_dict["filename"]:
             s.patch(
               BASE_API_ENDPOINT + pr_url.replace("pulls/", "issues/"),
               data=json.dumps({"labels": ["has migration"]})
