@@ -28,6 +28,6 @@ def add_has_migration_label():
             requests.patch(
               BASE_API_ENDPOINT + pr_url.replace("pulls/", "issues/"),
               headers=authorization_header,
-              data=json.dumps({"labels": ["has_migration"]})
+              data=json.dumps({"labels": ["has migration"]})
             )
     return "OK"
