@@ -17,17 +17,18 @@ def add_has_migration_label():
     This resource acts as a webhook to add "has_migration" label to a PR
     when a Django migration is introduced.
     """
+    s = requests.Session()
     payload = json.loads(request.get_data())
     url = payload["pull_request"]["url"]
     pr_url = url.split(BASE_API_ENDPOINT)[-1]
-    authorization_header = {"Authorization": f"token {GITHUB_AUTH_TOKEN}"}
+    if GITHUB_AUTH_TOKEN:
+        s.headers.update({"Authorization": f"token {GITHUB_AUTH_TOKEN}"})
 
-    r = requests.get(BASE_API_ENDPOINT + pr_url + "/files", headers=authorization_header)
+    r = s.get(BASE_API_ENDPOINT + pr_url + "/files")
     for file_dict in r.json():
         if re.match("migrations/", file_dict["filename"]):
-            requests.patch(
+            s.patch(
               BASE_API_ENDPOINT + pr_url.replace("pulls/", "issues/"),
-              headers=authorization_header,
               data=json.dumps({"labels": ["has migration"]})
             )
     return "OK"
